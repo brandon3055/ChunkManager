@@ -1,12 +1,15 @@
 package com.brandon3055.chunkmanager;
 
+import com.brandon3055.chunkmanager.api.CMPlugin;
 import com.brandon3055.chunkmanager.commands.CommandChunkload;
 import com.brandon3055.chunkmanager.commands.CommandManage;
+import com.brandon3055.chunkmanager.lib.APIHelper;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
@@ -55,10 +58,7 @@ public class ChunkManager {
         catch (Exception e) {
             e.printStackTrace();
         }
-    }
 
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-
+        APIHelper.loadAPI(event.getAsmData());
     }
 }

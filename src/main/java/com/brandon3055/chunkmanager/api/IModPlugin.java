@@ -3,9 +3,11 @@ package com.brandon3055.chunkmanager.api;
 /**
  * Created by brandon3055 on 17/11/2016.
  * This api was added for lolnet.co.nz but anyone can use it.
+ *
+ * To use this interface simply add it to a class and implement the annotation CMPlugin on that class.
+ * ChunkManager will than find the class on startup, create a new instance of it and call its methods automatically.
  */
-public interface ICMListener {
-
+public interface IModPlugin {
     /**
      * This allows you to modify the base chunk allocation for each player. This will be called whenever anything needs to check the players base chunk allocation.
      * You can use this for example to add extra chunks to players with different ranks.
