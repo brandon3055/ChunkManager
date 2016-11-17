@@ -95,9 +95,16 @@ task deobfJar(type: Jar) {
     manifest commonManifest
 }
 
+task apiJar(type: Jar) {
+    from sourceSets.main.allSource
+    from sourceSets.main.output
+    include 'com/brandon3055/chunkmanager/api/**/*'
+    classifier = 'api'
+}
+
 // Tell the artifact system about our extra jars
 artifacts {
-    archives srcJar, deobfJar
+    archives srcJar, deobfJar, apiJar
 }
 
 uploadArchives {
