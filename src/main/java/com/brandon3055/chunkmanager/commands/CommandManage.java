@@ -27,7 +27,7 @@ public class CommandManage extends CommandBase {
 
     @Override
     public int getRequiredPermissionLevel() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -64,10 +64,13 @@ public class CommandManage extends CommandBase {
 
         //region add/subtract
         else if (args[0].equals("add") || args[0].equals("subtract")) {
-            EntityPlayer player = getCommandSenderAsPlayer(sender);
+            EntityPlayer player;
             int number = 1;
             if (args.length > 1) {
                 player = getPlayer(server, sender, args[1]);
+            }
+            else {
+                player = getCommandSenderAsPlayer(sender);
             }
             if (args.length > 2) {
                 number = parseInt(args[2]);
@@ -167,7 +170,7 @@ public class CommandManage extends CommandBase {
         }
         //endregion
 
-        //region
+        //region user_info
         else if (args[0].equals("user_info") && args.length == 2) {
             EntityPlayer player = getPlayer(server, sender, args[1]);
             UserData data = DataManager.getUserData(player.getName());
@@ -182,7 +185,8 @@ public class CommandManage extends CommandBase {
             }
         }
         //endregion
-        //region
+
+        //region show_user_chunks
         else if (args[0].equals("show_user_chunks")) {
             if (args.length == 1 || ModEventHandler.opChunkDisplay.containsKey(sender.getName())) {
                 if (ModEventHandler.opChunkDisplay.containsKey(sender.getName())) {

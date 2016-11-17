@@ -1,5 +1,6 @@
 package com.brandon3055.chunkmanager;
 
+import com.brandon3055.chunkmanager.lib.LogHelper;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import net.minecraft.entity.player.EntityPlayer;

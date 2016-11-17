@@ -1,5 +1,6 @@
-package com.brandon3055.chunkmanager;
+package com.brandon3055.chunkmanager.lib;
 
+import com.brandon3055.chunkmanager.ChunkManager;
 import net.minecraft.launchwrapper.Launch;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
