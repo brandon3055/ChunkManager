@@ -3,6 +3,7 @@ package com.brandon3055.chunkmanager.commands;
 import com.brandon3055.chunkmanager.ChunkLoadingHandler;
 import com.brandon3055.chunkmanager.DataManager;
 import com.brandon3055.chunkmanager.DataManager.UserData;
+import com.brandon3055.chunkmanager.ModEventHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -46,9 +47,7 @@ public class CommandManage extends CommandBase {
             return;
         }
 
-        UserData data = DataManager.getUserData(sender.getName());
-        String user = sender.getName();
-
+        //region reload
         if (args[0].equals("reload")) {
             try {
                 DataManager.loadConfig();
@@ -61,6 +60,9 @@ public class CommandManage extends CommandBase {
             ChunkLoadingHandler.reloadChunks(server);
             sender.addChatMessage(new TextComponentString("Reloaded active chunk tickets!"));
         }
+        //endregion
+
+        //region add/subtract
         else if (args[0].equals("add") || args[0].equals("subtract")) {
             EntityPlayer player = getCommandSenderAsPlayer(sender);
             int number = 1;
@@ -94,6 +96,9 @@ public class CommandManage extends CommandBase {
                 throw new CommandException(e.getMessage());
             }
         }
+        //endregion
+
+        //region set log cooldown
         else if (args[0].equals("set_logout_cooldown") && args.length == 2) {
             String value = args[1];
             int number = 0;
@@ -121,6 +126,9 @@ public class CommandManage extends CommandBase {
 
             sender.addChatMessage(new TextComponentString("Logout cooldown set to " + DataManager.getFormattedCooldown() + "(hh:mm:ss)").setStyle(new Style().setColor(TextFormatting.GREEN)));
         }
+        //endregion
+
+        //region info
         else if (args[0].equals("info")) {
             sender.addChatMessage(new TextComponentString("======= Chunk Manager Info =======").setStyle(new Style().setColor(TextFormatting.DARK_AQUA)));
             twoColourChat(sender, "Logout Cooldown: ", TextFormatting.GOLD, DataManager.getFormattedCooldown() + " (hh:mm:s)", TextFormatting.GREEN);
@@ -142,6 +150,9 @@ public class CommandManage extends CommandBase {
             twoColourChat(sender, "All User Chunks: ", TextFormatting.GOLD, allChunks + " (may contain Duplicates)", TextFormatting.GREEN);
             sender.addChatMessage(new TextComponentString("ChunkManager. Created by Brandon3055").setStyle(new Style().setColor(TextFormatting.BLUE).setItalic(true)));
         }
+        //endregion
+
+        //region set chunk allowanceoad
         else if (args[0].equals("set_chunk_allowance") && args.length == 2) {
             DataManager.baseChunkAllocation = parseInt(args[1]);
             try {
@@ -154,6 +165,43 @@ public class CommandManage extends CommandBase {
             sender.addChatMessage(new TextComponentString("Base chunk allowance set to " + DataManager.baseChunkAllocation).setStyle(new Style().setColor(TextFormatting.GREEN)));
 
         }
+        //endregion
+
+        //region
+        else if (args[0].equals("user_info") && args.length == 2) {
+            EntityPlayer player = getPlayer(server, sender, args[1]);
+            UserData data = DataManager.getUserData(player.getName());
+            String user = player.getName();
+
+            sender.addChatMessage(new TextComponentString("========= Chunk Manager Status =========").setStyle(new Style().setColor(TextFormatting.DARK_AQUA)));
+            twoColourChat(sender, "Chunk Allowance: ", TextFormatting.GOLD, String.valueOf(data.extraChunks + DataManager.getBaseChunkAllocation(user)), TextFormatting.GREEN);
+            twoColourChat(sender, "Loaded Chunks: ", TextFormatting.GOLD, String.valueOf(data.chunksLoaded.size()), TextFormatting.GREEN);
+            sender.addChatMessage(new TextComponentString("Chunks:").setStyle(new Style().setColor(TextFormatting.GOLD)));
+            for (DataManager.LoadedChunk chunk : data.chunksLoaded) {
+                sender.addChatMessage(new TextComponentString(" - [ChunkX: " + ((chunk.chunkX * 16) + 8) + ", ChunkZ: " + ((chunk.chunkZ * 16) + 8) + ", Dimension: " + chunk.dimension +"]").setStyle(new Style().setColor(TextFormatting.GRAY)));
+            }
+        }
+        //endregion
+        //region
+        else if (args[0].equals("show_user_chunks")) {
+            if (args.length == 1 || ModEventHandler.opChunkDisplay.containsKey(sender.getName())) {
+                if (ModEventHandler.opChunkDisplay.containsKey(sender.getName())) {
+                    sender.addChatMessage(new TextComponentString("Nolonger showing user chunks for " + ModEventHandler.opChunkDisplay.get(sender.getName())));
+                    ModEventHandler.opChunkDisplay.remove(sender.getName());
+                }
+                else {
+                    sender.addChatMessage(new TextComponentString("You are not currently viewing any uses chunks."));
+                    sender.addChatMessage(new TextComponentString("To visually see a users chunks use /chunkmanager show_user_chunks <player>"));
+                }
+                return;
+            }
+
+            String user = getPlayer(server, sender, args[1]).getName();
+            ModEventHandler.opChunkDisplay.put(sender.getName(), user);
+            sender.addChatMessage(new TextComponentString("You can now see " + user + "'s loaded chunkc (if you are close enough to them)"));
+        }
+        //endregion
+
         else {
             help(sender);
         }
@@ -167,9 +215,8 @@ public class CommandManage extends CommandBase {
         sender.addChatMessage(new TextComponentString("/chunkmanager subtract <player> <number>"));
         sender.addChatMessage(new TextComponentString("/chunkmanager set_logout_cooldown [<ticks>, <seconds>s, <minutes>m or <hours>h]"));
         sender.addChatMessage(new TextComponentString("/chunkmanager set_chunk_allowance [number]"));
-
-//        sender.addChatMessage(new TextComponentString("/chunkmanager unload"));
-//        sender.addChatMessage(new TextComponentString("/chunkmanager show"));
+        sender.addChatMessage(new TextComponentString("/chunkmanager user_info [player]"));
+        sender.addChatMessage(new TextComponentString("/chunkmanager show_user_chunks [player]"));
     }
 
     public static void twoColourChat(ICommandSender sender, String s1, TextFormatting colour1, String s2, TextFormatting colour2) {
@@ -179,7 +226,7 @@ public class CommandManage extends CommandBase {
     @Override
     public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "info", "reload", "add", "subtract", "set_logout_cooldown", "set_chunk_allowance");//, "load", "unload", "show");
+            return getListOfStringsMatchingLastWord(args, "info", "reload", "add", "subtract", "set_logout_cooldown", "set_chunk_allowance", "user_info", "show_user_chunks");//, "load", "unload", "show");
         }
         else if (args.length == 2) {
             return getListOfStringsMatchingLastWord(args, server.getAllUsernames());

@@ -24,6 +24,7 @@ import java.util.*;
 public class ModEventHandler {
 
     public static List<String> chunkDisplay = new ArrayList<>();
+    public static Map<String, String> opChunkDisplay = new HashMap<>();
     public static Map<String, Integer> scheduledUnloads = new HashMap<>();
 
     @SideOnly(Side.SERVER)
@@ -36,6 +37,20 @@ public class ModEventHandler {
         EntityPlayerMP player = (EntityPlayerMP) event.player;
         if (chunkDisplay.contains(player.getName())) {
             UserData data = DataManager.getUserData(player.getName());
+            Random rand = player.worldObj.rand;
+            for (LoadedChunk chunk : data.chunksLoaded) {
+                if (player.worldObj.provider.getDimension() == chunk.dimension) {
+                    for (int i = 0; i < 64; i++) {
+                        if (rand.nextInt(16) == 0 && player.worldObj.isAirBlock(new BlockPos((chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8))) {
+                            ((WorldServer) player.worldObj).spawnParticle(player, EnumParticleTypes.DRAGON_BREATH, true, (chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8, 1, 0, 0, 0, 0.05, 0);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (opChunkDisplay.containsKey(player.getName())) {
+            UserData data = DataManager.getUserData(opChunkDisplay.get(player.getName()));
             Random rand = player.worldObj.rand;
             for (LoadedChunk chunk : data.chunksLoaded) {
                 if (player.worldObj.provider.getDimension() == chunk.dimension) {
