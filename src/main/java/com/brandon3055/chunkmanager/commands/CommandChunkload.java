@@ -16,6 +16,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,6 +27,13 @@ public class CommandChunkload extends CommandBase {
     @Override
     public int getRequiredPermissionLevel() {
         return 0;
+    }
+
+    @Override
+    public List<String> getCommandAliases() {
+        List<String> list = new LinkedList<>();
+        list.add("cl");
+        return list;
     }
 
     @Override

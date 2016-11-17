@@ -1,5 +1,7 @@
 package com.brandon3055.chunkmanager;
 
+import com.brandon3055.chunkmanager.api.API;
+import com.brandon3055.chunkmanager.lib.APIRegistry;
 import com.brandon3055.chunkmanager.lib.LogHelper;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -28,6 +30,8 @@ public class DataManager {
     public static List<UserData> userDataList = new ArrayList<>();
     private static Map<String, UserData> nameToData = new HashMap<>();
 
+    private static APIRegistry API_REGISTRY = new APIRegistry();
+
     //region Init,Save,Load
 
     public static void initialize(File config) {
@@ -54,6 +58,8 @@ public class DataManager {
         }
 
         ChunkManager.configuration = new Configuration(new File(cManager, "ChunkManager.cfg"));
+
+        API.registry = API_REGISTRY;
     }
 
     public static void saveConfig() throws IOException {
@@ -132,15 +138,15 @@ public class DataManager {
     }
 
     public static int getBaseChunkAllocation(String username) {
-        return baseChunkAllocation;
+        return API_REGISTRY.getBaseChunkAllowance(username, baseChunkAllocation);
     }
 
     public static int getUserChunkAllocation(String username) {
-        return getBaseChunkAllocation(username) + getUserData(username).extraChunks;
+        return API_REGISTRY.getTotalChunkAllowance(username, getBaseChunkAllocation(username), getUserData(username).extraChunks);
     }
 
     public static int getUserLogoutCooldown(String username) {
-        return logoutCoolDown;
+        return API_REGISTRY.getLogoutTimeout(username, logoutCoolDown);
     }
 
     //endregion

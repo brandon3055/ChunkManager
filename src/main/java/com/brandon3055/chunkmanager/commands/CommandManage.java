@@ -18,6 +18,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -38,6 +39,13 @@ public class CommandManage extends CommandBase {
     @Override
     public String getCommandUsage(ICommandSender sender) {
         return "/chunkmanager";
+    }
+
+    @Override
+    public List<String> getCommandAliases() {
+        List<String> list = new LinkedList<>();
+        list.add("cm");
+        return list;
     }
 
     @Override
