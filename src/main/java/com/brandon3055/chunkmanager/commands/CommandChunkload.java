@@ -24,6 +24,11 @@ import java.util.List;
 public class CommandChunkload extends CommandBase {
 
     @Override
+    public int getRequiredPermissionLevel() {
+        return 0;
+    }
+
+    @Override
     public String getCommandName() {
         return "chunkload";
     }

@@ -25,6 +25,11 @@ import java.util.List;
 public class CommandManage extends CommandBase {
 
     @Override
+    public int getRequiredPermissionLevel() {
+        return 3;
+    }
+
+    @Override
     public String getCommandName() {
         return "chunkmanager";
     }
