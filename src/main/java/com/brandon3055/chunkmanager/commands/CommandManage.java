@@ -186,11 +186,11 @@ public class CommandManage extends CommandBase {
         else if (args[0].equals("show_user_chunks")) {
             if (args.length == 1 || ModEventHandler.opChunkDisplay.containsKey(sender.getName())) {
                 if (ModEventHandler.opChunkDisplay.containsKey(sender.getName())) {
-                    sender.addChatMessage(new TextComponentString("Nolonger showing user chunks for " + ModEventHandler.opChunkDisplay.get(sender.getName())));
+                    sender.addChatMessage(new TextComponentString("Nolonger showing user chunks for " + ModEventHandler.opChunkDisplay.get(sender.getName())).setStyle(new Style().setColor(TextFormatting.GREEN)));
                     ModEventHandler.opChunkDisplay.remove(sender.getName());
                 }
                 else {
-                    sender.addChatMessage(new TextComponentString("You are not currently viewing any uses chunks."));
+                    sender.addChatMessage(new TextComponentString("You are not currently viewing any user's chunks."));
                     sender.addChatMessage(new TextComponentString("To visually see a users chunks use /chunkmanager show_user_chunks <player>"));
                 }
                 return;
@@ -198,7 +198,7 @@ public class CommandManage extends CommandBase {
 
             String user = getPlayer(server, sender, args[1]).getName();
             ModEventHandler.opChunkDisplay.put(sender.getName(), user);
-            sender.addChatMessage(new TextComponentString("You can now see " + user + "'s loaded chunkc (if you are close enough to them)"));
+            sender.addChatMessage(new TextComponentString("You can now see " + user + "'s loaded chunks (if you are close enough to them)").setStyle(new Style().setColor(TextFormatting.GREEN)));
         }
         //endregion
 
