@@ -14,8 +14,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
 
@@ -28,10 +26,9 @@ public class ModEventHandler {
     public static Map<String, String> opChunkDisplay = new HashMap<>();
     public static Map<String, Integer> scheduledUnloads = new HashMap<>();
 
-    @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void playerTickEvent(TickEvent.PlayerTickEvent event) {
-        if (event.side == Side.CLIENT) {
+        if (event.player.worldObj.isRemote) {
             return;
         }
 
@@ -65,7 +62,6 @@ public class ModEventHandler {
         }
     }
 
-    @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void playerLogin(PlayerLoggedInEvent event) {
         if (event.player.worldObj instanceof WorldServer) {
@@ -77,7 +73,6 @@ public class ModEventHandler {
         }
     }
 
-    @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void playerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.player.worldObj instanceof WorldServer) {
@@ -85,7 +80,6 @@ public class ModEventHandler {
         }
     }
 
-    @SideOnly(Side.SERVER)
     @SubscribeEvent
     public void serverTickEvent(ServerTickEvent event) {
         for (String user : scheduledUnloads.keySet()) {

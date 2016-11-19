@@ -3,8 +3,6 @@ package com.brandon3055.chunkmanager;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +12,11 @@ import java.util.List;
  */
 public class ModLoadingCallback implements ForgeChunkManager.LoadingCallback {
 
-    @SideOnly(Side.SERVER) //TODO look into cleaning this up because this is probably not very efficient.
     @Override
     public void ticketsLoaded(List<Ticket> tickets, World world) {
+        if (world.isRemote) {
+            return;
+        }
         List<String> toRefresh = new ArrayList<>();
         for (Ticket ticket : tickets) {
             if (ticket.isPlayerTicket()) {
