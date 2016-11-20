@@ -82,17 +82,22 @@ public class ModEventHandler {
 
     @SubscribeEvent
     public void serverTickEvent(ServerTickEvent event) {
+        List<String> toRemove = new LinkedList<>();
         for (String user : scheduledUnloads.keySet()) {
             scheduledUnloads.put(user, scheduledUnloads.get(user) - 1);
 
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
             if (scheduledUnloads.get(user) <= 0 && server != null) {
                 ChunkLoadingHandler.stopLoading(user, server);
-                scheduledUnloads.remove(user);
+                toRemove.add(user);
             }
             else if (server == null) {
                 LogHelper.error("Could not unload player chunks because server is null?!?!");
             }
         }
+        for (String user : toRemove) {
+            scheduledUnloads.remove(user);
+        }
+        toRemove.clear();
     }
 }
