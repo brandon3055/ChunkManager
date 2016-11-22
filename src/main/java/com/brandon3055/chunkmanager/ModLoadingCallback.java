@@ -14,7 +14,7 @@ public class ModLoadingCallback implements ForgeChunkManager.LoadingCallback {
 
     @Override
     public void ticketsLoaded(List<Ticket> tickets, World world) {
-        if (world.isRemote) {
+        if (world.isRemote || world.getMinecraftServer() == null) {
             return;
         }
         List<String> toRefresh = new ArrayList<>();
@@ -27,8 +27,11 @@ public class ModLoadingCallback implements ForgeChunkManager.LoadingCallback {
             ForgeChunkManager.releaseTicket(ticket);
         }
 
-        for (String user : toRefresh) {
-            ChunkLoadingHandler.updateLoading(user, world.getMinecraftServer());
+        try {
+            for (String user : toRefresh) {
+                ChunkLoadingHandler.updateLoading(user, world.getMinecraftServer());
+            }
         }
+        catch (Throwable ignored) {}
     }
 }

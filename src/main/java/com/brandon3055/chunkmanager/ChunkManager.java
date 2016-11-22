@@ -1,6 +1,7 @@
 package com.brandon3055.chunkmanager;
 
 import com.brandon3055.chunkmanager.commands.CommandChunkload;
+import com.brandon3055.chunkmanager.commands.CommandListLoaders;
 import com.brandon3055.chunkmanager.commands.CommandManage;
 import com.brandon3055.chunkmanager.lib.APIHelper;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -36,6 +37,7 @@ public class ChunkManager {
     public void serverStart(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandChunkload());
         event.registerServerCommand(new CommandManage());
+        event.registerServerCommand(new CommandListLoaders());
     }
 
     @Mod.EventHandler
