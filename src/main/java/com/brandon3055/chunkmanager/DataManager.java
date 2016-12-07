@@ -27,7 +27,7 @@ public class DataManager {
     private static File userData;
     private static File configFile;
     public static List<UserData> userDataList = new ArrayList<>();
-    private static Map<String, UserData> nameToData = new HashMap<>();
+    public static Map<String, UserData> nameToData = new HashMap<>();
 
     //region Init,Save,Load
 

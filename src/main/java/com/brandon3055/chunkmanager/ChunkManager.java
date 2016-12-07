@@ -9,6 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -38,6 +39,11 @@ public class ChunkManager {
         event.registerServerCommand(new CommandChunkload());
         event.registerServerCommand(new CommandManage());
         event.registerServerCommand(new CommandListLoaders());
+    }
+
+    @Mod.EventHandler
+    public void serverStarted(FMLServerStartedEvent event) {
+        ChunkLoadingHandler.SERVER_STARTED = true;
     }
 
     @Mod.EventHandler

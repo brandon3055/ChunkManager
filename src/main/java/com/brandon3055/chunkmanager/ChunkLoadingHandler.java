@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public class ChunkLoadingHandler {
 
+    public static boolean SERVER_STARTED = false;
+
     /** Stores a map of players to tickets. With tickets in a map of dimension to ticket. */
     public static Map<String, Map<Integer, Ticket>> playerTickets = new HashMap<>();
     /** This is just a list of all active tickets. */
@@ -43,6 +45,9 @@ public class ChunkLoadingHandler {
      * This releases the player tickets if they exist then recreates them and loads the chunks.
      */
     public static void updateLoading(String username, MinecraftServer server) {
+        if (!SERVER_STARTED) {
+            return;
+        }
         LogHelper.dev("Updating user chunks for: " + username);
 
         if (playerTickets.containsKey(username)) {
@@ -70,6 +75,7 @@ public class ChunkLoadingHandler {
 
             Ticket ticket;
             if (!tickets.containsKey(chunk.dimension)) {
+                LogHelper.dev("updateLoading: " + ChunkManager.instance+" "+username+" "+world);
                 ticket = ForgeChunkManager.requestPlayerTicket(ChunkManager.instance, username, world, ForgeChunkManager.Type.NORMAL);
                 if (ticket == null) {
                     LogHelper.warn("Could not get chunk loading ticket for player: " + username + " For dimension: " + chunk.dimension);

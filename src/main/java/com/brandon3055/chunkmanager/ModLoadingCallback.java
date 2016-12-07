@@ -1,5 +1,6 @@
 package com.brandon3055.chunkmanager;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -17,6 +18,7 @@ public class ModLoadingCallback implements ForgeChunkManager.LoadingCallback {
         if (world.isRemote || world.getMinecraftServer() == null) {
             return;
         }
+
         List<String> toRefresh = new ArrayList<>();
         for (Ticket ticket : tickets) {
             if (ticket.isPlayerTicket()) {
@@ -28,8 +30,11 @@ public class ModLoadingCallback implements ForgeChunkManager.LoadingCallback {
         }
 
         try {
+            MinecraftServer server = world.getMinecraftServer();
             for (String user : toRefresh) {
-                ChunkLoadingHandler.updateLoading(user, world.getMinecraftServer());
+                if (server.getPlayerList().getPlayerByUsername(user) != null){
+                    ChunkLoadingHandler.updateLoading(user, server);
+                }
             }
         }
         catch (Throwable ignored) {}

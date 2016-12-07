@@ -30,7 +30,6 @@ public class CommandListLoaders extends CommandBase {
     private static Map<Integer, LinkedList<Ticket>> ticketCache = new HashMap<>();
     private static int cacheHash = 0;
 
-
 	@Override
 	public String getCommandName() {
 		return "listchunkloaders";

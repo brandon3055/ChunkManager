@@ -7,6 +7,7 @@ import com.brandon3055.chunkmanager.ModEventHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -180,9 +181,12 @@ public class CommandManage extends CommandBase {
 
         //region user_info
         else if (args[0].equals("user_info") && args.length == 2) {
-            EntityPlayer player = getPlayer(server, sender, args[1]);
-            UserData data = DataManager.getUserData(player.getName());
-            String user = player.getName();
+            if (!DataManager.nameToData.containsKey(args[1])) {
+                throw new PlayerNotFoundException();
+            }
+
+            String user = args[1];
+            UserData data = DataManager.getUserData(user);
 
             sender.addChatMessage(new TextComponentString("========= Chunk Manager Status =========").setStyle(new Style().setColor(TextFormatting.DARK_AQUA)));
             twoColourChat(sender, "Chunk Allowance: ", TextFormatting.GOLD, String.valueOf(data.extraChunks + DataManager.getBaseChunkAllocation(user)), TextFormatting.GREEN);
