@@ -1,5 +1,6 @@
 package com.brandon3055.chunkmanager;
 
+import com.brandon3055.chunkmanager.lib.LogHelper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -18,6 +19,8 @@ public class ModLoadingCallback implements ForgeChunkManager.LoadingCallback {
         if (world.isRemote || world.getMinecraftServer() == null) {
             return;
         }
+
+        LogHelper.dev("ModLoadingCallback#ticketsLoaded");
 
         List<String> toRefresh = new ArrayList<>();
         for (Ticket ticket : tickets) {
