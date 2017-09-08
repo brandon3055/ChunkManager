@@ -237,8 +237,8 @@ public class DataManager {
         }
 
         public static LoadedChunk fromPlayer(EntityPlayer player) {
-            Chunk chunk = player.worldObj.getChunkFromBlockCoords(player.getPosition());
-            return new LoadedChunk(chunk.xPosition, chunk.zPosition, player.worldObj.provider.getDimension());
+            Chunk chunk = player.world.getChunkFromBlockCoords(player.getPosition());
+            return new LoadedChunk(chunk.x, chunk.z, player.world.provider.getDimension());
         }
 
         @Override

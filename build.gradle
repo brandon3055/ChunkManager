@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -31,8 +31,8 @@ version = "${config.mcversion}-${config.mod_version}"
 group = "com.brandon3055.chunkmanager"
 archivesBaseName = "ChunkManager"
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
 minecraft {
     version = config.mcversion + "-" + config.forge_version
@@ -119,7 +119,7 @@ uploadArchives {
                     project {
                         name project.archivesBaseName
                         packaging 'jar'
-                        description 'TolkienTweaks'
+                        description 'ChunkManager'
                         url 'https://github.com/brandon3055/ChunkManager'
                         scm {
                             url 'https://github.com/brandon3055/ChunkManager'

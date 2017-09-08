@@ -28,19 +28,19 @@ public class ModEventHandler {
 
     @SubscribeEvent
     public void playerTickEvent(TickEvent.PlayerTickEvent event) {
-        if (event.player.worldObj.isRemote) {
+        if (event.player.world.isRemote) {
             return;
         }
 
         EntityPlayerMP player = (EntityPlayerMP) event.player;
         if (chunkDisplay.contains(player.getName())) {
             UserData data = DataManager.getUserData(player.getName());
-            Random rand = player.worldObj.rand;
+            Random rand = player.world.rand;
             for (LoadedChunk chunk : data.chunksLoaded) {
-                if (player.worldObj.provider.getDimension() == chunk.dimension) {
+                if (player.world.provider.getDimension() == chunk.dimension) {
                     for (int i = 0; i < 64; i++) {
-                        if (rand.nextInt(16) == 0 && player.worldObj.isAirBlock(new BlockPos((chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8))) {
-                            ((WorldServer) player.worldObj).spawnParticle(player, EnumParticleTypes.DRAGON_BREATH, true, (chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8, 1, 0, 0, 0, 0.05, 0);
+                        if (rand.nextInt(16) == 0 && player.world.isAirBlock(new BlockPos((chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8))) {
+                            ((WorldServer) player.world).spawnParticle(player, EnumParticleTypes.DRAGON_BREATH, true, (chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8, 1, 0, 0, 0, 0.05, 0);
                         }
                     }
                 }
@@ -49,12 +49,12 @@ public class ModEventHandler {
 
         if (opChunkDisplay.containsKey(player.getName())) {
             UserData data = DataManager.getUserData(opChunkDisplay.get(player.getName()));
-            Random rand = player.worldObj.rand;
+            Random rand = player.world.rand;
             for (LoadedChunk chunk : data.chunksLoaded) {
-                if (player.worldObj.provider.getDimension() == chunk.dimension) {
+                if (player.world.provider.getDimension() == chunk.dimension) {
                     for (int i = 0; i < 64; i++) {
-                        if (rand.nextInt(16) == 0 && player.worldObj.isAirBlock(new BlockPos((chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8))) {
-                            ((WorldServer) player.worldObj).spawnParticle(player, EnumParticleTypes.DRAGON_BREATH, true, (chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8, 1, 0, 0, 0, 0.05, 0);
+                        if (rand.nextInt(16) == 0 && player.world.isAirBlock(new BlockPos((chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8))) {
+                            ((WorldServer) player.world).spawnParticle(player, EnumParticleTypes.DRAGON_BREATH, true, (chunk.chunkX * 16) + 8, i * 4, (chunk.chunkZ * 16) + 8, 1, 0, 0, 0, 0.05, 0);
                         }
                     }
                 }
@@ -64,8 +64,8 @@ public class ModEventHandler {
 
     @SubscribeEvent
     public void playerLogin(PlayerLoggedInEvent event) {
-        if (event.player.worldObj instanceof WorldServer) {
-            WorldServer world = (WorldServer) event.player.worldObj;
+        if (event.player.world instanceof WorldServer) {
+            WorldServer world = (WorldServer) event.player.world;
             if (scheduledUnloads.containsKey(event.player.getName())) {
                 scheduledUnloads.remove(event.player.getName());
             }
@@ -75,7 +75,7 @@ public class ModEventHandler {
 
     @SubscribeEvent
     public void playerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (event.player.worldObj instanceof WorldServer) {
+        if (event.player.world instanceof WorldServer) {
             scheduledUnloads.put(event.player.getName(), DataManager.getUserLogoutCooldown(event.player.getName()));
         }
     }

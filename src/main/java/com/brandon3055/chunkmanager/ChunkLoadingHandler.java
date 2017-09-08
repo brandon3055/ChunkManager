@@ -67,7 +67,7 @@ public class ChunkLoadingHandler {
 
         UserData data = DataManager.getUserData(username);
         for (LoadedChunk chunk : data.chunksLoaded) {
-            WorldServer world = server.worldServerForDimension(chunk.dimension);
+            WorldServer world = server.getWorld(chunk.dimension);
             if (world == null) {
                 LogHelper.warn("Could not load chunk in dimension " + chunk.dimension + " Did not find that dimension.");
                 continue;

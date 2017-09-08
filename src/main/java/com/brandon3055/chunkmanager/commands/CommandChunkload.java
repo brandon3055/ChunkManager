@@ -30,19 +30,19 @@ public class CommandChunkload extends CommandBase {
     }
 
     @Override
-    public List<String> getCommandAliases() {
+    public List<String> getAliases() {
         List<String> list = new LinkedList<>();
         list.add("cl");
         return list;
     }
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "chunkload";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         return "/chunkload";
     }
 
@@ -57,12 +57,12 @@ public class CommandChunkload extends CommandBase {
         String user = sender.getName();
 
         if (args[0].equals("status")) {
-            sender.addChatMessage(new TextComponentString("========= Chunk Manager Status =========").setStyle(new Style().setColor(TextFormatting.DARK_AQUA)));
+            sender.sendMessage(new TextComponentString("========= Chunk Manager Status =========").setStyle(new Style().setColor(TextFormatting.DARK_AQUA)));
             twoColourChat(sender, "Chunk Allowance: ", TextFormatting.GOLD, String.valueOf(data.extraChunks + DataManager.getBaseChunkAllocation(user)), TextFormatting.GREEN);
             twoColourChat(sender, "Loaded Chunks: ", TextFormatting.GOLD, String.valueOf(data.chunksLoaded.size()), TextFormatting.GREEN);
-            sender.addChatMessage(new TextComponentString("Chunks:").setStyle(new Style().setColor(TextFormatting.GOLD)));
+            sender.sendMessage(new TextComponentString("Chunks:").setStyle(new Style().setColor(TextFormatting.GOLD)));
             for (LoadedChunk chunk : data.chunksLoaded) {
-                sender.addChatMessage(new TextComponentString(" - [ChunkX: " + ((chunk.chunkX * 16) + 8) + ", ChunkZ: " + ((chunk.chunkZ * 16) + 8) + ", Dimension: " + chunk.dimension +"]").setStyle(new Style().setColor(TextFormatting.GRAY)));
+                sender.sendMessage(new TextComponentString(" - [ChunkX: " + ((chunk.chunkX * 16) + 8) + ", ChunkZ: " + ((chunk.chunkZ * 16) + 8) + ", Dimension: " + chunk.dimension +"]").setStyle(new Style().setColor(TextFormatting.GRAY)));
             }
         }
         else if (args[0].equals("load")) {
@@ -78,11 +78,11 @@ public class CommandChunkload extends CommandBase {
         else if (args[0].equals("show")) {
             if (ModEventHandler.chunkDisplay.contains(user)) {
                 ModEventHandler.chunkDisplay.remove(user);
-                sender.addChatMessage(new TextComponentString("Loaded Chunk Display Deactivated").setStyle(new Style().setColor(TextFormatting.GREEN)));
+                sender.sendMessage(new TextComponentString("Loaded Chunk Display Deactivated").setStyle(new Style().setColor(TextFormatting.GREEN)));
             }
             else {
                 ModEventHandler.chunkDisplay.add(user);
-                sender.addChatMessage(new TextComponentString("Loaded Chunk Display Activated (Look for the particles)").setStyle(new Style().setColor(TextFormatting.GREEN)));
+                sender.sendMessage(new TextComponentString("Loaded Chunk Display Activated (Look for the particles)").setStyle(new Style().setColor(TextFormatting.GREEN)));
             }
         }
         else {
@@ -95,12 +95,12 @@ public class CommandChunkload extends CommandBase {
         String name = player.getName();
 
         if (data.chunksLoaded.contains(chunk)) {
-            player.addChatComponentMessage(new TextComponentString("You are already loading this chunk!").setStyle(new Style().setColor(TextFormatting.RED)));
+            player.sendMessage(new TextComponentString("You are already loading this chunk!").setStyle(new Style().setColor(TextFormatting.RED)));
             return;
         }
 
         if (data.chunksLoaded.size() >= DataManager.getUserChunkAllocation(name)) {
-            player.addChatComponentMessage(new TextComponentString("You have reached your chunk allocation limit!").setStyle(new Style().setColor(TextFormatting.DARK_RED)));
+            player.sendMessage(new TextComponentString("You have reached your chunk allocation limit!").setStyle(new Style().setColor(TextFormatting.DARK_RED)));
             return;
         }
 
@@ -112,14 +112,14 @@ public class CommandChunkload extends CommandBase {
             throw new CommandException(e.getMessage());
         }
         ChunkLoadingHandler.updateLoading(name, server);
-        player.addChatComponentMessage(new TextComponentString("You are now loading this chunk!").setStyle(new Style().setColor(TextFormatting.GREEN)));
+        player.sendMessage(new TextComponentString("You are now loading this chunk!").setStyle(new Style().setColor(TextFormatting.GREEN)));
     }
 
     private void stopLoading(EntityPlayer player, UserData data, MinecraftServer server) throws CommandException {
         LoadedChunk chunk = LoadedChunk.fromPlayer(player);
 
         if (!data.chunksLoaded.contains(chunk)) {
-            player.addChatComponentMessage(new TextComponentString("You are not loading this chunk!").setStyle(new Style().setColor(TextFormatting.RED)));
+            player.sendMessage(new TextComponentString("You are not loading this chunk!").setStyle(new Style().setColor(TextFormatting.RED)));
             return;
         }
 
@@ -131,25 +131,25 @@ public class CommandChunkload extends CommandBase {
             throw new CommandException(e.getMessage());
         }
         ChunkLoadingHandler.updateLoading(player.getName(), server);
-        player.addChatComponentMessage(new TextComponentString("You are nolonger loading this chunk!").setStyle(new Style().setColor(TextFormatting.GREEN)));
+        player.sendMessage(new TextComponentString("You are nolonger loading this chunk!").setStyle(new Style().setColor(TextFormatting.GREEN)));
     }
 
     private void help(ICommandSender sender) {
-        sender.addChatMessage(new TextComponentString("Usage:"));
-        sender.addChatMessage(new TextComponentString("/chunkload status"));
-        sender.addChatMessage(new TextComponentString("/chunkload load"));
-        sender.addChatMessage(new TextComponentString("/chunkload unload"));
-        sender.addChatMessage(new TextComponentString("/chunkload unloadall"));
-        sender.addChatMessage(new TextComponentString("/chunkload show"));
-        sender.addChatMessage(new TextComponentString("Tip: Press F3+G to show chunk boundaries"));
+        sender.sendMessage(new TextComponentString("Usage:"));
+        sender.sendMessage(new TextComponentString("/chunkload status"));
+        sender.sendMessage(new TextComponentString("/chunkload load"));
+        sender.sendMessage(new TextComponentString("/chunkload unload"));
+        sender.sendMessage(new TextComponentString("/chunkload unloadall"));
+        sender.sendMessage(new TextComponentString("/chunkload show"));
+        sender.sendMessage(new TextComponentString("Tip: Press F3+G to show chunk boundaries"));
     }
 
     public static void twoColourChat(ICommandSender sender, String s1, TextFormatting colour1, String s2, TextFormatting colour2) {
-        sender.addChatMessage(new TextComponentString(s1).setStyle(new Style().setColor(colour1)).appendSibling(new TextComponentString(s2).setStyle(new Style().setColor(colour2))));
+        sender.sendMessage(new TextComponentString(s1).setStyle(new Style().setColor(colour1)).appendSibling(new TextComponentString(s2).setStyle(new Style().setColor(colour2))));
     }
 
     @Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         return getListOfStringsMatchingLastWord(args, "status", "load", "unload", "unloadall", "show");
     }
 }

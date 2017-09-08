@@ -1,5 +1,6 @@
 package com.brandon3055.chunkmanager.commands;
 
+
 import com.brandon3055.chunkmanager.lib.LogHelper;
 import com.google.common.collect.Lists;
 import net.minecraft.command.CommandBase;
@@ -31,12 +32,12 @@ public class CommandListLoaders extends CommandBase {
     private static int cacheHash = 0;
 
 	@Override
-	public String getCommandName() {
+	public String getName() {
 		return "listchunkloaders";
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender p_71518_1_) {
+	public String getUsage(ICommandSender p_71518_1_) {
 		return "/listchunkloaders";
 	}
 
@@ -49,7 +50,7 @@ public class CommandListLoaders extends CommandBase {
         }
         else if (args.length == 5 && args[0].equals("[Show-Chunks]")) {
             if (cacheHash != parseInt(args[4])) {
-                sender.addChatMessage(new TextComponentString("Ticket cache has expired! Please run the list command again to refresh the cache.").setStyle(new Style().setColor(TextFormatting.RED)));
+                sender.sendMessage(new TextComponentString("Ticket cache has expired! Please run the list command again to refresh the cache.").setStyle(new Style().setColor(TextFormatting.RED)));
                 return;
             }
 
@@ -66,7 +67,7 @@ public class CommandListLoaders extends CommandBase {
 	}
 
 	private void updateCache(MinecraftServer server) {
-        for (WorldServer worldServer : server.worldServers) {
+        for (WorldServer worldServer : server.worlds) {
             LinkedList<Ticket> tickets = new LinkedList<>();
 
             for (Map.Entry<ChunkPos, Ticket> entry : ForgeChunkManager.getPersistentChunksFor(worldServer).entries()) {
@@ -86,12 +87,12 @@ public class CommandListLoaders extends CommandBase {
     }
 
     private void listTickets(int page, MinecraftServer server, ICommandSender sender, int hash) {
-        sender.addChatMessage(new TextComponentString("================ Ticket List ================").setStyle(new Style().setColor(TextFormatting.AQUA)));
+        sender.sendMessage(new TextComponentString("================ Ticket List ================").setStyle(new Style().setColor(TextFormatting.AQUA)));
 
         LinkedList<ITextComponent> components = new LinkedList<>();
 
         for (int dimension : ticketCache.keySet()) {
-            WorldServer dim = server.worldServerForDimension(dimension);
+            WorldServer dim = server.getWorld(dimension);
             components.add(new TextComponentString("Tickets for dimension: " + (dim == null ? dimension+"" : dim.provider.getDimensionType().getName())).setStyle(new Style().setColor(TextFormatting.GREEN).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Tickets are used by mods to load chunks via forge. Depending on how the mod implements them each player may have their own tickets. A ticket can load multiple chunks within a dimension but each dimension required a different ticket.")))));
             components.add(new TextComponentString("Index:[Mod : Player : Chunk Count : Data]").setStyle(new Style().setColor(DARK_PURPLE)));
 
@@ -99,7 +100,7 @@ public class CommandListLoaders extends CommandBase {
                 String s = String.format(" %s%s:%s[%s%s : %s : %s : %s%s]", YELLOW, ticketCache.get(dimension).indexOf(ticket), DARK_AQUA, GOLD, ticket.getModId(), ticket.isPlayerTicket() ? ticket.getPlayerName() : "unknown", ticket.getChunkList().size(), ticket.getModData(), DARK_AQUA);
 
                 components.add(new TextComponentString(s).setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString("Click to show chunk list!")))
-                        .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getCommandName() + " [Show-Chunks] " + dimension + " " + ticketCache.get(dimension).indexOf(ticket) + " " + 0 + " " + hash))));
+                        .setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " [Show-Chunks] " + dimension + " " + ticketCache.get(dimension).indexOf(ticket) + " " + 0 + " " + hash))));
             }
 
             components.add(new TextComponentString(""));
@@ -111,10 +112,10 @@ public class CommandListLoaders extends CommandBase {
         for (int i = 0; i < rows; i++) {
             int index = (page * rows) + i;
             if (index >= 0 && index < components.size()) {
-                sender.addChatMessage(components.get(index));
+                sender.sendMessage(components.get(index));
             }
             else {
-                sender.addChatMessage(new TextComponentString(""));
+                sender.sendMessage(new TextComponentString(""));
             }
         }
 
@@ -123,23 +124,23 @@ public class CommandListLoaders extends CommandBase {
 
         LogHelper.error(page + " / " + pages);
         if (page > 0) {
-            prev.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getCommandName() + " [Ticket-Page] " + (page - 1)));
+            prev.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " [Ticket-Page] " + (page - 1)));
         }
 
         ITextComponent pageDisplay = new TextComponentString(String.format("[Page: %s/%s]", page + 1, pages + 1));
         ITextComponent next = new TextComponentString(" Next-> ").setStyle(new Style().setColor(TextFormatting.GOLD));
 
         if (page < pages) {
-            next.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getCommandName() + " [Ticket-Page] " + (page + 1)));
+            next.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " [Ticket-Page] " + (page + 1)));
         }
 
         ITextComponent end = new TextComponentString("=========").setStyle(new Style().setColor(TextFormatting.AQUA));
 
-        sender.addChatMessage(start.appendSibling(prev).appendSibling(pageDisplay).appendSibling(next).appendSibling(end));
+        sender.sendMessage(start.appendSibling(prev).appendSibling(pageDisplay).appendSibling(next).appendSibling(end));
     }
 
     private void ticketInfo(int page, ICommandSender sender, int dimension, int ticketIndex, int hash) {
-        sender.addChatMessage(new TextComponentString("================ Ticket Chunks ================").setStyle(new Style().setColor(TextFormatting.AQUA)));
+        sender.sendMessage(new TextComponentString("================ Ticket Chunks ================").setStyle(new Style().setColor(TextFormatting.AQUA)));
 
         Ticket ticket = ticketCache.get(dimension).get(ticketIndex);
 
@@ -147,8 +148,8 @@ public class CommandListLoaders extends CommandBase {
 
         List<ChunkPos> list = Lists.newArrayList(ticket.getChunkList());
         for (ChunkPos pos : list) {
-            int x = (pos.chunkXPos * 16) + 8;
-            int z = (pos.chunkZPos * 16) + 8;
+            int x = (pos.x * 16) + 8;
+            int z = (pos.z * 16) + 8;
             int y = sender.getEntityWorld().getTopSolidOrLiquidBlock(new BlockPos(x, 255, z)).getY();
 
             ITextComponent hover = new TextComponentString(sender.getEntityWorld().provider.getDimension() == dimension ? "Click To Teleport To Chunk" : "Can not teleport to chunk because chunk is in a different dimension!");
@@ -163,10 +164,10 @@ public class CommandListLoaders extends CommandBase {
         for (int i = 0; i < rows; i++) {
             int index = (page * rows) + i;
             if (index >= 0 && index < components.size()) {
-                sender.addChatMessage(components.get(index));
+                sender.sendMessage(components.get(index));
             }
             else {
-                sender.addChatMessage(new TextComponentString(""));
+                sender.sendMessage(new TextComponentString(""));
             }
         }
 //cmd [Show-Chunks] <dim> <ticket> <page> <hash>
@@ -175,18 +176,18 @@ public class CommandListLoaders extends CommandBase {
 
         LogHelper.error(page + " / " + pages);
         if (page > 0) {
-            prev.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getCommandName() + " [Show-Chunks] " + dimension + " " + ticketIndex + " " + (page - 1) + " " + hash));
+            prev.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " [Show-Chunks] " + dimension + " " + ticketIndex + " " + (page - 1) + " " + hash));
         }
 
         ITextComponent pageDisplay = new TextComponentString(String.format("[Page: %s/%s]", page + 1, pages + 1));
         ITextComponent next = new TextComponentString(" Next-> ").setStyle(new Style().setColor(TextFormatting.GOLD));
 
         if (page < pages) {
-            next.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getCommandName() + " [Show-Chunks] " + dimension + " " + ticketIndex + " " + (page + 1) + " " + hash));
+            next.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " [Show-Chunks] " + dimension + " " + ticketIndex + " " + (page + 1) + " " + hash));
         }
 
         ITextComponent end = new TextComponentString("=========").setStyle(new Style().setColor(TextFormatting.AQUA));
 
-        sender.addChatMessage(start.appendSibling(prev).appendSibling(pageDisplay).appendSibling(next).appendSibling(end));
+        sender.sendMessage(start.appendSibling(prev).appendSibling(pageDisplay).appendSibling(next).appendSibling(end));
     }
 }
